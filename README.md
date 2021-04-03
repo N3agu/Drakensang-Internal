@@ -2,6 +2,12 @@
 
 A simple cpp drakensang dll injector.
 
+**How to use**
+- Rename your dll: DSO_Internal_Cheat.dll
+- Compile the injector with release x86 settings
+- Copy your cheat into Release x86 folder
+- run DSO_Dll_Injector.exe
+
 Image:
 
 ![alt text](https://github.com/Wtf-Is-This-x1337/Drakensang_Injector/blob/main/main.png?raw=true)
