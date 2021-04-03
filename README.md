@@ -4,7 +4,7 @@ A simple cpp drakensang dll injector.
 
 Image:
 
-![alt text](https://github.com/Two-Apes/Drakensang_Injector/blob/main/main.png?raw=true)
+![alt text](https://github.com/Wtf-Is-This-x1337/Drakensang_Injector/blob/main/main.png?raw=true)
 
 [How To Run]
 1. Download the file (code -> download ZIP)
