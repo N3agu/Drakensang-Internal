@@ -1,6 +1,6 @@
 # Drakensang_Injector
 
-A simple cpp drakensang dll injector.
+A simple cpp drakensang[https://www.drakensang.com/] dll injector.
 
 **How to use**
 - Rename your dll: DSO_Internal_Cheat.dll
