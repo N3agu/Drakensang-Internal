@@ -1,4 +1,4 @@
-# Drakensang_Injector
+# Drakensang Injector
 
 A simple cpp [drakensang](https://www.drakensang.com/) dll injector.
 
