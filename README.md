@@ -18,7 +18,5 @@ A simple cpp [drakensang](https://www.drakensang.com/) dll injector.
 ## License
 Drakensang Injector is free software, and is released under the terms of the MIT Public License. See MIT for complete license
 
-Disclaimer
+## Disclaimer
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-While the public version of this antivirus is still in early development, the type names and class interfaces are subject to change.
