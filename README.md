@@ -16,7 +16,7 @@ A simple cpp [drakensang](https://www.drakensang.com/) dll injector.
 ![alt text](https://github.com/Wtf-Is-This-x1337/Drakensang_Injector/blob/main/main.png?raw=true)
 
 ## License
-Drakensang Injector is free software, and is released under the terms of the MIT Public License. See MIT for complete license
+Drakensang Injector is free software, and is released under the terms of the [MIT Public License](https://github.com/Wtf-Is-This-x1337/Drakensang_Injector/blob/main/LICENSE).
 
 ## Disclaimer
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
