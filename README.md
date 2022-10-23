@@ -2,15 +2,23 @@
 
 A simple cpp [drakensang](https://www.drakensang.com/) dll injector.
 
-**How to build**
+## How to build
 1. Clone the source with `git clone --recursive https://github.com/Wtf-Is-This-x1337/Drakensang_Injector.git`
 2. Build in Visual Studio 2019+ with configuration "Release | x86" (build may fail if set to "x64" or "Debug")
 
-**How to use**
+## How to use
 - Rename your dll to "DSO_Internal_Cheat.dll"
 - Copy your cheat into Release x86 folder
 - run "DSO_Dll_Injector.exe" (Administrator privilege may be needed if failed to inject)
 
-Image:
+## Image:
 
 ![alt text](https://github.com/Wtf-Is-This-x1337/Drakensang_Injector/blob/main/main.png?raw=true)
+
+## License
+Drakensang Injector is free software, and is released under the terms of the MIT Public License. See MIT for complete license
+
+Disclaimer
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+While the public version of this antivirus is still in early development, the type names and class interfaces are subject to change.
