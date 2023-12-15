@@ -169,7 +169,7 @@ int main() {
         if (dllFiles.size() == 1) {
             Cheat = dllFiles[0];
         } else {
-            std::cout << "Choose the Injector DLL :" << '\n';
+            std::cout << "Choose the Cheat DLL :" << '\n';
             int counter{}, choice{};
             for (const auto &dllFileName: dllFiles) {
                 std::wcout << ++counter << ") " << dllFileName << std::endl;
