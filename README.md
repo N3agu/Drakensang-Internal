@@ -13,7 +13,7 @@ A simple cpp [drakensang](https://www.drakensang.com/) dll injector.
 
 ## Image:
 
-![alt text](https://github.com/Wtf-Is-This-x1337/Drakensang_Injector/blob/main/main.png?raw=true)
+![alt text](https://github.com/N3agu/Drakensang_Injector/blob/main/main.png?raw=true)
 
 ## License
 MIT License
