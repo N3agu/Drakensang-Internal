@@ -21,6 +21,10 @@ soon
 ## Build
 soon
 
+## Credits
+- CheatEngine's Forum - [post on ThreadStack](https://forum.cheatengine.org/viewtopic.php?p=5487976#5487976)
+- [5aava's ThreadStack finder for x64](https://github.com/5aava/cheatengine-threadstack-finder-x64)
+
 ## License
 Drakensang Internal is licensed under the [MIT license](https://github.com/N3agu/Drakensang-Internal/blob/main/LICENSE).
 
