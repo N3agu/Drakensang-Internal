@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drakensang Injector", "Drakensang Injector.csproj", "{F110366C-9335-46CB-99F1-E5FBFF765F46}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F110366C-9335-46CB-99F1-E5FBFF765F46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F110366C-9335-46CB-99F1-E5FBFF765F46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F110366C-9335-46CB-99F1-E5FBFF765F46}.Debug|x64.ActiveCfg = Debug|x64
+		{F110366C-9335-46CB-99F1-E5FBFF765F46}.Debug|x64.Build.0 = Debug|x64
+		{F110366C-9335-46CB-99F1-E5FBFF765F46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F110366C-9335-46CB-99F1-E5FBFF765F46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F110366C-9335-46CB-99F1-E5FBFF765F46}.Release|x64.ActiveCfg = Release|x64
+		{F110366C-9335-46CB-99F1-E5FBFF765F46}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {526264EA-59BC-436C-8E03-E3675FFD9EB9}
+	EndGlobalSection
+EndGlobal
