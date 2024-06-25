@@ -2,7 +2,7 @@
 
 The injector was written in c# (.NET 4.8), the cheat was written in c++17
 
-## Image:
+## Images:
 
 ## License
 Drakensang Internal is licensed under the [MIT license](https://github.com/N3agu/Drakensang-Internal/blob/main/LICENSE).
