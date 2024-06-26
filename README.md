@@ -23,7 +23,7 @@ Offsets were found with Cheat Engine.
 - Camera<br>
 Address: **threadstack0 - 0x00000270**<br>
 Offsets: **0x78, 0x110, 0x738, 0x78, 0x60, 0x78**
-<details>
+<details open>
 <summary>Camera Image</summary>
 <br>
 <img src="https://raw.githubusercontent.com/N3agu/Drakensang-Internal/main/images/camera.png">
@@ -32,7 +32,7 @@ Offsets: **0x78, 0x110, 0x738, 0x78, 0x60, 0x78**
 - Smoke<br>
 Address: **threadstack0 - 0x00000270**<br>
 Offsets: **0x78, 0x110, 0x738, 0x78, 0x60, 0x88**
-<details>
+<details open>
 <summary>Smoke Image</summary>
 <br>
 <img src="https://raw.githubusercontent.com/N3agu/Drakensang-Internal/main/images/smoke.png">
@@ -41,7 +41,7 @@ Offsets: **0x78, 0x110, 0x738, 0x78, 0x60, 0x88**
 - Angle of View<br>
 Address: **threadstack0 - 0x00000270**<br>
 Offsets: **0x78, 0x110, 0x738, 0x78, 0x60, 0x94**
-<details>
+<details open>
 <summary>Angle of View Image</summary>
 <br>
 <img src="https://raw.githubusercontent.com/N3agu/Drakensang-Internal/main/images/angle.png">
