@@ -13,7 +13,8 @@ It is a simple injector which gets the handle of the game process, obtains the a
 - Exit correctly (kill pid)
 
 ## Internal Cheat
-soon
+Offsets were found with Cheat Engine.
+
 ### Features:
 - Show/Hide & Unload<br>
 **INS** - hide/show the menu<br>
@@ -47,11 +48,27 @@ Offsets: **0x78, 0x110, 0x738, 0x78, 0x60, 0x94**
 </details>
 
 ## Build
-soon
+Both the injector and the cheat were built with Visual Studio 2022.
+
+### Injector
+- Framework: .NET 4.8<br>
+- Target: Release<br>
+- Architecture: x64
+
+### Cheat
+- C++ Language Standard: /std:c++17<br>
+- Target: Release<br>
+- Architecture: x64<br>
+- Character Set: Use Multi-Byte<br>
+- Precompiled Headers: Not Using Precompiled Headers<br><br>
+The injector can be found inside "*\Drakensang Injector\bin\x64\Release*".<br>
+The cheat can be found inside "*\Drakensang Internal\build*".
 
 ## Improvements
 - code refractoring
+- character selector
 - finding entity list
+- other utilities in-game (fast mount, inventory seller, etc.)
 
 ## Credits
 - CheatEngine's Forum - [post on ThreadStack](https://forum.cheatengine.org/viewtopic.php?p=5487976#5487976)
