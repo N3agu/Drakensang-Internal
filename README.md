@@ -3,14 +3,23 @@
 The injector was written in c# (.NET 4.8), the cheat was written in c++17. The cheat is using [MinHook](https://github.com/TsudaKageyu/minhook) for DirectX9 hooking with an [ImGui](https://github.com/ocornut/imgui) implementation for the menu.
 
 ## Injector:
-soon
-
+It is a simple injector which gets the handle of the game process, obtains the address of **LoadLibraryA** from **kernel32.dll**, allocates memory with **VirtualAllocEx**, writes bytes with **WriteProcessMemory**, and then creates a thread which will run **LoadLibraryA**.<br><br>
 ![injector](https://raw.githubusercontent.com/N3agu/Drakensang-Internal/main/images/injector.png)
+
+### Features
+- Settings (save & load config file)
+- Auto start (start game - maximize - login with password - select the server specified in config)
+- Inject cheat (injects a dll into *dro_client64*)
+- Exit correctly (kill pid)
 
 ## Internal Cheat
 soon
 ### Features:
-- Camera
+- Show/Hide & Unload<br>
+**INS** - hide/show the menu<br>
+**END** - unhook dll
+
+- Camera<br>
 Address: **threadstack0 - 0x00000270**<br>
 Offsets: **0x78, 0x110, 0x738, 0x78, 0x60, 0x78**
 <details>
@@ -19,7 +28,7 @@ Offsets: **0x78, 0x110, 0x738, 0x78, 0x60, 0x78**
 <img src="https://raw.githubusercontent.com/N3agu/Drakensang-Internal/main/images/camera.png">
 </details>
 
-- Smoke
+- Smoke<br>
 Address: **threadstack0 - 0x00000270**<br>
 Offsets: **0x78, 0x110, 0x738, 0x78, 0x60, 0x88**
 <details>
@@ -28,7 +37,7 @@ Offsets: **0x78, 0x110, 0x738, 0x78, 0x60, 0x88**
 <img src="https://raw.githubusercontent.com/N3agu/Drakensang-Internal/main/images/smoke.png">
 </details>
 
-- Angle of View
+- Angle of View<br>
 Address: **threadstack0 - 0x00000270**<br>
 Offsets: **0x78, 0x110, 0x738, 0x78, 0x60, 0x94**
 <details>
