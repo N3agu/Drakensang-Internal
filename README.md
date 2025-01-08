@@ -24,7 +24,7 @@ Offsets were found with Cheat Engine.
 Address: **threadstack0 - 0x00000270**<br>
 Offsets: **0x78, 0x110, 0x738, 0x78, 0x60, 0x78**
 <details open>
-<summary>Camera Image</summary>
+<summary>Camera Preview</summary>
 <br>
 <img src="https://raw.githubusercontent.com/N3agu/Drakensang-Internal/main/images/camera.png">
 </details>
@@ -33,7 +33,7 @@ Offsets: **0x78, 0x110, 0x738, 0x78, 0x60, 0x78**
 Address: **threadstack0 - 0x00000270**<br>
 Offsets: **0x78, 0x110, 0x738, 0x78, 0x60, 0x88**
 <details open>
-<summary>Smoke Image</summary>
+<summary>Smoke Preview</summary>
 <br>
 <img src="https://raw.githubusercontent.com/N3agu/Drakensang-Internal/main/images/smoke.png">
 </details>
@@ -42,9 +42,18 @@ Offsets: **0x78, 0x110, 0x738, 0x78, 0x60, 0x88**
 Address: **threadstack0 - 0x00000270**<br>
 Offsets: **0x78, 0x110, 0x738, 0x78, 0x60, 0x94**
 <details open>
-<summary>Angle of View Image</summary>
+<summary>Angle of View Preview</summary>
 <br>
 <img src="https://raw.githubusercontent.com/N3agu/Drakensang-Internal/main/images/angle.png">
+</details>
+
+- Visual Attack Speed<br>
+Address: **threadstack0 - 0x00000270**<br>
+Offsets: **0x78, 0x110, 0x730, 0x30, 0x0, 0xC8**
+<details open>
+<summary>Visual Attack Speed Preview</summary>
+<br>
+<img src="https://raw.githubusercontent.com/N3agu/Drakensang-Internal/main/images/attackspeed.gif">
 </details>
 
 ## Build
