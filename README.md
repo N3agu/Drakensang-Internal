@@ -87,5 +87,6 @@ The cheat can be found inside "*\Drakensang Internal\build*".
 Drakensang Internal is licensed under the [MIT license](https://github.com/N3agu/Drakensang-Internal/blob/main/LICENSE).
 
 ## Disclaimer
+- The latest release is **OLD**. Please build from the source.
 - This project is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 - This project is for learning purposes only and strictly prohibited for any illegal activities. Users bear full responsibility for any misuse.
