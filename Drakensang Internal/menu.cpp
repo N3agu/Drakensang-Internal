@@ -17,7 +17,8 @@ DWORD pid;
 
 uint64_t cameraPointerAddress = NULL,
 	smokePointerAddress = NULL,
-	anglePointerAddress = NULL;
+	anglePointerAddress = NULL,
+	attackSpeedPointerAddress = NULL;
 
 HANDLE hProcHandle = NULL,
 	threadHandle = NULL;
@@ -78,16 +79,20 @@ void calculatePointersForFeatures() {
 	uint64_t threadstack0 = GetThreadStartAddress(hProcHandle, threadHandle),
 		cameraAddress = -0x00000270,
 		smokeAddress = -0x00000270,
-		angleAddress = -0x00000270;
+		angleAddress = -0x00000270,
+		attackSpeedAddress = -0x00000270;
 	
 	std::vector<uint64_t> cameraOffsets = { 0x78, 0x110, 0x738, 0x78, 0x60, 0x78 };
 	std::vector<uint64_t> smokeOffsets = { 0x78, 0x110, 0x738, 0x78, 0x60, 0x88 };
 	std::vector<uint64_t> angleOffsets = { 0x78, 0x110, 0x738, 0x78, 0x60, 0x94 };
+	std::vector<uint64_t> attackSpeedOffsets = { 0x78, 0x110, 0x730, 0x30, 0x0, 0xC8 };
+	std::vector<uint64_t> latestEnemyNameOffsets = { 0x350, 0x100, 0x58, 0x260, 0x260 };
 
 	// Calculate the correct addresses
 	ReadProcessMemory(hProcHandle, (LPVOID)(threadstack0 + cameraAddress), &cameraPointerAddress, sizeof(cameraPointerAddress), NULL);
 	ReadProcessMemory(hProcHandle, (LPVOID)(threadstack0 + smokeAddress), &smokePointerAddress, sizeof(smokePointerAddress), NULL);
 	ReadProcessMemory(hProcHandle, (LPVOID)(threadstack0 + angleAddress), &anglePointerAddress, sizeof(anglePointerAddress), NULL);
+	ReadProcessMemory(hProcHandle, (LPVOID)(threadstack0 + attackSpeedAddress), &attackSpeedPointerAddress, sizeof(attackSpeedPointerAddress), NULL);
 
 	// Add the offsets, -1 because we dont want the value at the last offset
 	for (i = 0; i < cameraOffsets.size() - 1; i++)
@@ -99,10 +104,14 @@ void calculatePointersForFeatures() {
 	for (i = 0; i < angleOffsets.size() - 1; i++)
 		ReadProcessMemory(hProcHandle, (LPVOID)(anglePointerAddress + angleOffsets.at(i)), &anglePointerAddress, sizeof(anglePointerAddress), NULL);
 
+	for (i = 0; i < attackSpeedOffsets.size() - 1; i++)
+		ReadProcessMemory(hProcHandle, (LPVOID)(attackSpeedPointerAddress + attackSpeedOffsets.at(i)), &attackSpeedPointerAddress, sizeof(attackSpeedPointerAddress), NULL);
+
 	// Add last offset
 	cameraPointerAddress += cameraOffsets.at(cameraOffsets.size() - 1);
 	smokePointerAddress += smokeOffsets.at(smokeOffsets.size() - 1);
 	anglePointerAddress += angleOffsets.at(angleOffsets.size() - 1);
+	attackSpeedPointerAddress += attackSpeedOffsets.at(attackSpeedOffsets.size() - 1);
 
 	CloseHandle(threadHandle);
 }
@@ -216,6 +225,10 @@ void showMenu() {
 		static float angleValue = 0.5934119821f; // original value
 		ImGui::SliderFloat("Angle View", &angleValue, 0.1f, 5.0f);
 		WriteProcessMemory(hProcHandle, reinterpret_cast<LPVOID>(anglePointerAddress), &angleValue, sizeof(float), 0);
+		
+		static float attackSpeedValue = 1.170f;
+		ImGui::SliderFloat("Visual Attack Speed", &attackSpeedValue, 0.1f, 30.0f);
+		WriteProcessMemory(hProcHandle, reinterpret_cast<LPVOID>(attackSpeedPointerAddress), &attackSpeedValue, sizeof(float), 0);
 		ImGui::End();
 	}
 }
