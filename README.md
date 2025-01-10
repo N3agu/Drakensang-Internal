@@ -56,6 +56,14 @@ Offsets: **0x78, 0x110, 0x730, 0x30, 0x0, 0xC8**
 <img src="https://raw.githubusercontent.com/N3agu/Drakensang-Internal/main/images/attackspeed.gif">
 </details>
 
+- Visual Username<br>
+Address: **threadstack0 - 0x00000270**<br>
+Offsets: **0xD8, 0x120, 0x78, 0xD0, 0x60, 0x260, 0x2A0**
+
+- Health<br>
+Address: **threadstack0 - 0x00000270**<br>
+Offsets: **0x194, 0x108, 0x58, 0x30, 0x200, 0x78**
+
 ## Build
 Both the injector and the cheat were built with Visual Studio 2022.
 
