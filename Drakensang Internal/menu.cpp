@@ -12,13 +12,46 @@
 #include <sstream>
 #include <inttypes.h>
 
-inline bool menu = true;
+inline bool featuresMenu = true;
+inline bool characterMenu = true;
 DWORD pid;
+
+uint64_t threadstack0 = NULL;
 
 uint64_t cameraPointerAddress = NULL,
 	smokePointerAddress = NULL,
 	anglePointerAddress = NULL,
-	attackSpeedPointerAddress = NULL;
+	attackSpeedPointerAddress = NULL,
+	nonenemySelectedPointerAddress = NULL,
+	enemySelectedPointerAddress = NULL,
+	currentMapPointerAddress = NULL,
+	usernamePointerAddress = NULL,
+	healthPointerAddress = NULL,
+	manaPointerAddress = NULL;
+
+uint64_t cameraAddress = -0x00000270,
+smokeAddress = -0x00000270,
+angleAddress = -0x00000270,
+attackSpeedAddress = -0x00000270,
+usernameAddress = -0x00000270,
+currentMapAddress = -0x00000270,
+enemySelectedAddress = -0x00000270,
+nonenemySelectedAddress = -0x00000270,
+healthAddress = -0x00000278,
+manaAddress = -0x00000270;
+
+std::vector<uint64_t> cameraOffsets = { 0x78, 0x110, 0x738, 0x78, 0x60, 0x78 };
+std::vector<uint64_t> smokeOffsets = { 0x78, 0x110, 0x738, 0x78, 0x60, 0x88 };
+std::vector<uint64_t> angleOffsets = { 0x78, 0x110, 0x738, 0x78, 0x60, 0x94 };
+std::vector<uint64_t> attackSpeedOffsets = { 0x78, 0x110, 0x730, 0x30, 0x0, 0xC8 };
+
+// Unused offsets
+std::vector<uint64_t> usernameOffsets = { 0xD8, 0x120, 0x78, 0xD0, 0x60, 0x260, 0x2A0 };
+std::vector<uint64_t> healthOffsets = { 0x1C0, 0x78, 0xE8, 0x50, 0x58, 0x108, 0x198 };
+std::vector<uint64_t> manaOffsets = { 0x78, 0x200, 0x30, 0x58, 0x108, 0xA8 };
+std::vector<uint64_t> nonenemySelectedOffsets = { 0x158, 0x200, 0x10, 0x70, 0x60, 0x0, 0x2A0 };
+std::vector<uint64_t> enemySelectedOffsets = { 0x158, 0x58, 0x60, 0x0, 0x2A0 };
+std::vector<uint64_t> currentMapOffsets = { 0x1B8, 0x98, 0x40, 0x60, 0x0, 0x260, 0x260 };
 
 HANDLE hProcHandle = NULL,
 	threadHandle = NULL;
@@ -53,6 +86,7 @@ uint64_t GetThreadStartAddress(HANDLE processHandle, HANDLE hThread) {
 	return result;
 }
 
+
 std::vector<uint64_t> threadList(uint64_t pid) {
 	std::vector<uint64_t> vect = std::vector<uint64_t>();
 	HANDLE h = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
@@ -72,64 +106,87 @@ std::vector<uint64_t> threadList(uint64_t pid) {
 }
 
 void calculatePointersForFeatures() {
-	std::vector<uint64_t> threadId = threadList(pid);
-	HANDLE threadHandle = OpenThread(THREAD_GET_CONTEXT | THREAD_QUERY_INFORMATION, FALSE, *threadId.begin());
+	try {
+		// Calculate the correct addresses
+		ReadProcessMemory(hProcHandle, (LPVOID)(threadstack0 + cameraAddress), &cameraPointerAddress, sizeof(cameraPointerAddress), NULL);
+		ReadProcessMemory(hProcHandle, (LPVOID)(threadstack0 + smokeAddress), &smokePointerAddress, sizeof(smokePointerAddress), NULL);
+		ReadProcessMemory(hProcHandle, (LPVOID)(threadstack0 + angleAddress), &anglePointerAddress, sizeof(anglePointerAddress), NULL);
+		ReadProcessMemory(hProcHandle, (LPVOID)(threadstack0 + attackSpeedAddress), &attackSpeedPointerAddress, sizeof(attackSpeedPointerAddress), NULL);
+		ReadProcessMemory(hProcHandle, (LPVOID)(threadstack0 + currentMapAddress), &currentMapPointerAddress, sizeof(currentMapPointerAddress), NULL);
+		ReadProcessMemory(hProcHandle, (LPVOID)(threadstack0 + nonenemySelectedAddress), &nonenemySelectedPointerAddress, sizeof(nonenemySelectedPointerAddress), NULL);
+		ReadProcessMemory(hProcHandle, (LPVOID)(threadstack0 + enemySelectedAddress), &enemySelectedPointerAddress, sizeof(enemySelectedPointerAddress), NULL);
+		ReadProcessMemory(hProcHandle, (LPVOID)(threadstack0 + usernameAddress), &usernamePointerAddress, sizeof(usernamePointerAddress), NULL);
+		ReadProcessMemory(hProcHandle, (LPVOID)(threadstack0 + healthAddress), &healthPointerAddress, sizeof(healthPointerAddress), NULL);
+		ReadProcessMemory(hProcHandle, (LPVOID)(threadstack0 + manaAddress), &manaPointerAddress, sizeof(manaPointerAddress), NULL);
 
-	int i;
-	uint64_t threadstack0 = GetThreadStartAddress(hProcHandle, threadHandle),
-		cameraAddress = -0x00000270,
-		smokeAddress = -0x00000270,
-		angleAddress = -0x00000270,
-		attackSpeedAddress = -0x00000270;
-	
-	std::vector<uint64_t> cameraOffsets = { 0x78, 0x110, 0x738, 0x78, 0x60, 0x78 };
-	std::vector<uint64_t> smokeOffsets = { 0x78, 0x110, 0x738, 0x78, 0x60, 0x88 };
-	std::vector<uint64_t> angleOffsets = { 0x78, 0x110, 0x738, 0x78, 0x60, 0x94 };
-	std::vector<uint64_t> attackSpeedOffsets = { 0x78, 0x110, 0x730, 0x30, 0x0, 0xC8 };
-	std::vector<uint64_t> latestEnemyNameOffsets = { 0x350, 0x100, 0x58, 0x260, 0x260 };
+		int i;
+		// Add the offsets, -1 because we dont want the value at the last offset
+		for (i = 0; i < cameraOffsets.size() - 1; i++)
+			ReadProcessMemory(hProcHandle, (LPVOID)(cameraPointerAddress + cameraOffsets.at(i)), &cameraPointerAddress, sizeof(cameraPointerAddress), NULL);
 
-	// Calculate the correct addresses
-	ReadProcessMemory(hProcHandle, (LPVOID)(threadstack0 + cameraAddress), &cameraPointerAddress, sizeof(cameraPointerAddress), NULL);
-	ReadProcessMemory(hProcHandle, (LPVOID)(threadstack0 + smokeAddress), &smokePointerAddress, sizeof(smokePointerAddress), NULL);
-	ReadProcessMemory(hProcHandle, (LPVOID)(threadstack0 + angleAddress), &anglePointerAddress, sizeof(anglePointerAddress), NULL);
-	ReadProcessMemory(hProcHandle, (LPVOID)(threadstack0 + attackSpeedAddress), &attackSpeedPointerAddress, sizeof(attackSpeedPointerAddress), NULL);
+		for (i = 0; i < smokeOffsets.size() - 1; i++)
+			ReadProcessMemory(hProcHandle, (LPVOID)(smokePointerAddress + smokeOffsets.at(i)), &smokePointerAddress, sizeof(smokePointerAddress), NULL);
 
-	// Add the offsets, -1 because we dont want the value at the last offset
-	for (i = 0; i < cameraOffsets.size() - 1; i++)
-		ReadProcessMemory(hProcHandle, (LPVOID)(cameraPointerAddress + cameraOffsets.at(i)), &cameraPointerAddress, sizeof(cameraPointerAddress), NULL);
+		for (i = 0; i < angleOffsets.size() - 1; i++)
+			ReadProcessMemory(hProcHandle, (LPVOID)(anglePointerAddress + angleOffsets.at(i)), &anglePointerAddress, sizeof(anglePointerAddress), NULL);
 
-	for (i = 0; i < smokeOffsets.size() - 1; i++)
-		ReadProcessMemory(hProcHandle, (LPVOID)(smokePointerAddress + smokeOffsets.at(i)), &smokePointerAddress, sizeof(smokePointerAddress), NULL);
+		for (i = 0; i < attackSpeedOffsets.size() - 1; i++)
+			ReadProcessMemory(hProcHandle, (LPVOID)(attackSpeedPointerAddress + attackSpeedOffsets.at(i)), &attackSpeedPointerAddress, sizeof(attackSpeedPointerAddress), NULL);
 
-	for (i = 0; i < angleOffsets.size() - 1; i++)
-		ReadProcessMemory(hProcHandle, (LPVOID)(anglePointerAddress + angleOffsets.at(i)), &anglePointerAddress, sizeof(anglePointerAddress), NULL);
+		for (i = 0; i < currentMapOffsets.size() - 1; i++)
+			ReadProcessMemory(hProcHandle, (LPVOID)(currentMapPointerAddress + currentMapOffsets.at(i)), &currentMapPointerAddress, sizeof(currentMapPointerAddress), NULL);
 
-	for (i = 0; i < attackSpeedOffsets.size() - 1; i++)
-		ReadProcessMemory(hProcHandle, (LPVOID)(attackSpeedPointerAddress + attackSpeedOffsets.at(i)), &attackSpeedPointerAddress, sizeof(attackSpeedPointerAddress), NULL);
+		for (i = 0; i < nonenemySelectedOffsets.size() - 1; i++)
+			ReadProcessMemory(hProcHandle, (LPVOID)(nonenemySelectedPointerAddress + nonenemySelectedOffsets.at(i)), &nonenemySelectedPointerAddress, sizeof(nonenemySelectedPointerAddress), NULL);
 
-	// Add last offset
-	cameraPointerAddress += cameraOffsets.at(cameraOffsets.size() - 1);
-	smokePointerAddress += smokeOffsets.at(smokeOffsets.size() - 1);
-	anglePointerAddress += angleOffsets.at(angleOffsets.size() - 1);
-	attackSpeedPointerAddress += attackSpeedOffsets.at(attackSpeedOffsets.size() - 1);
+		for (i = 0; i < enemySelectedOffsets.size() - 1; i++)
+			ReadProcessMemory(hProcHandle, (LPVOID)(enemySelectedPointerAddress + enemySelectedOffsets.at(i)), &enemySelectedPointerAddress, sizeof(enemySelectedPointerAddress), NULL);
 
-	CloseHandle(threadHandle);
+		for (i = 0; i < usernameOffsets.size() - 1; i++)
+			ReadProcessMemory(hProcHandle, (LPVOID)(usernamePointerAddress + usernameOffsets.at(i)), &usernamePointerAddress, sizeof(usernamePointerAddress), NULL);
+
+		for (i = 0; i < healthOffsets.size() - 1; i++)
+			ReadProcessMemory(hProcHandle, (LPVOID)(healthPointerAddress + healthOffsets.at(i)), &healthPointerAddress, sizeof(healthPointerAddress), NULL);
+
+		for (i = 0; i < manaOffsets.size() - 1; i++)
+			ReadProcessMemory(hProcHandle, (LPVOID)(manaPointerAddress + manaOffsets.at(i)), &manaPointerAddress, sizeof(manaPointerAddress), NULL);
+
+		// Add last offset
+		cameraPointerAddress += cameraOffsets.at(cameraOffsets.size() - 1);
+		smokePointerAddress += smokeOffsets.at(smokeOffsets.size() - 1);
+		anglePointerAddress += angleOffsets.at(angleOffsets.size() - 1);
+		attackSpeedPointerAddress += attackSpeedOffsets.at(attackSpeedOffsets.size() - 1);
+		currentMapPointerAddress += currentMapOffsets.at(currentMapOffsets.size() - 1);
+		nonenemySelectedPointerAddress += nonenemySelectedOffsets.at(nonenemySelectedOffsets.size() - 1);
+		enemySelectedPointerAddress += enemySelectedOffsets.at(enemySelectedOffsets.size() - 1);
+		usernamePointerAddress += usernameOffsets.at(usernameOffsets.size() - 1);
+		healthPointerAddress += healthOffsets.at(healthOffsets.size() - 1);
+		manaPointerAddress += manaOffsets.at(manaOffsets.size() - 1);
+	}
+	catch (...) {}
 }
 
 LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	if (GetAsyncKeyState(VK_INSERT) & 1) {
-		menu = !menu;
-		if (menu) calculatePointersForFeatures(); // Recalculate the threadstack & addresses in case the map was changed
+		featuresMenu = !featuresMenu;
 	}
 
-	if (GetAsyncKeyState(VK_DELETE) & 1)
+	if (GetAsyncKeyState(VK_HOME) & 1) {
+		characterMenu = !characterMenu;
+	}
+	
+	calculatePointersForFeatures(); // Recalculate the threadstack & addresses in case the map was changed
+	
+	if (GetAsyncKeyState(VK_DELETE) & 1) {
 		imgui_unhook();
+	}
 
-	if (menu && ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
+	if ((featuresMenu || characterMenu) && ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
 		return 1L;
 
 	return CallWindowProc(oWndProc, hWnd, uMsg, wParam, lParam);
 }
+
 
 DWORD WINAPI menuSetup(LPVOID lpParameter) {
 	while (!GetModuleHandle("Drakensang Internal.dll")) Sleep(100);
@@ -146,6 +203,11 @@ DWORD WINAPI menuSetup(LPVOID lpParameter) {
 		MessageBoxA(NULL, "Invalid HWND", "Failed to find window", 0);
 		return 0;
 	}
+
+	std::vector<uint64_t> threadId = threadList(pid);
+	threadHandle = OpenThread(THREAD_GET_CONTEXT | THREAD_QUERY_INFORMATION, FALSE, *threadId.begin());
+	threadstack0 = GetThreadStartAddress(hProcHandle, threadHandle);
+	CloseHandle(threadHandle);
 
 	calculatePointersForFeatures();
 
@@ -212,24 +274,113 @@ HRESULT APIENTRY DrawIndexedPrimitive_hook(LPDIRECT3DDEVICE9 pD3D9, D3DPRIMITIVE
 void showMenu() {
 	IM_ASSERT(ImGui::GetCurrentContext() != NULL && "Missing dear imgui context");
 	ImGuiWindowFlags window_flags = 0;
-	if (menu) {
-		ImGui::Begin("Drakensang Internal | N3agu", &menu, ImGuiWindowFlags_NoSavedSettings);
-		static float cameraValue = 25.0f; // original value
-		ImGui::SliderFloat("Camera", &cameraValue, 5.0f, 120.0f);
-		WriteProcessMemory(hProcHandle, reinterpret_cast<LPVOID>(cameraPointerAddress), &cameraValue, sizeof(float), 0);
+	if (featuresMenu) {
+		try {
+			ImGui::Begin("Features | DSO Internal by N3agu", &featuresMenu, ImGuiWindowFlags_NoSavedSettings);
+			ImGui::Text("Keep the menu closed while entering a new map!");
 
-		static float smokeValue = 25.0f; // original value
-		ImGui::SliderFloat("Smoke", &smokeValue, 0.0f, 100.0f);
-		WriteProcessMemory(hProcHandle, reinterpret_cast<LPVOID>(smokePointerAddress), &smokeValue, sizeof(float), 0);
+			static float cameraValue = 25.0f; // original value
+			ImGui::SliderFloat("Camera", &cameraValue, 5.0f, 120.0f);
+			WriteProcessMemory(hProcHandle, reinterpret_cast<LPVOID>(cameraPointerAddress), &cameraValue, sizeof(float), 0);
 
-		static float angleValue = 0.5934119821f; // original value
-		ImGui::SliderFloat("Angle View", &angleValue, 0.1f, 5.0f);
-		WriteProcessMemory(hProcHandle, reinterpret_cast<LPVOID>(anglePointerAddress), &angleValue, sizeof(float), 0);
-		
-		static float attackSpeedValue = 1.170f;
-		ImGui::SliderFloat("Visual Attack Speed", &attackSpeedValue, 0.1f, 30.0f);
-		WriteProcessMemory(hProcHandle, reinterpret_cast<LPVOID>(attackSpeedPointerAddress), &attackSpeedValue, sizeof(float), 0);
-		ImGui::End();
+			static float smokeValue = 25.0f; // original value
+			ImGui::SliderFloat("Smoke", &smokeValue, 0.0f, 100.0f);
+			WriteProcessMemory(hProcHandle, reinterpret_cast<LPVOID>(smokePointerAddress), &smokeValue, sizeof(float), 0);
+
+			static float angleValue = 0.5934119821f; // original value
+			ImGui::SliderFloat("Angle View", &angleValue, 0.1f, 5.0f);
+			WriteProcessMemory(hProcHandle, reinterpret_cast<LPVOID>(anglePointerAddress), &angleValue, sizeof(float), 0);
+
+			static float attackSpeedValue = 1.170f; // my characters value
+			ImGui::SliderFloat("Visual Attack Speed", &attackSpeedValue, 0.1f, 30.0f);
+			WriteProcessMemory(hProcHandle, reinterpret_cast<LPVOID>(attackSpeedPointerAddress), &attackSpeedValue, sizeof(float), 0);
+			ImGui::End();
+		}
+		catch (...) {
+			// Catch-all for unexpected errors - debugging
+		}
+	}
+
+	if (characterMenu) {
+		try {
+			ImGui::Begin("Character | DSO Internal by N3agu", &characterMenu, ImGuiWindowFlags_NoSavedSettings);
+
+			static char currentMapValue[256] = "";
+			SIZE_T bytesReadForMap = 0;
+
+			bool foundMap = ReadProcessMemory(hProcHandle, reinterpret_cast<LPCVOID>(currentMapPointerAddress), currentMapValue, sizeof(currentMapValue), &bytesReadForMap);
+
+			if (foundMap) {
+				ImGui::Text("Current Map: %s", currentMapValue);
+			}
+			else {
+				ImGui::Text("Current Map: Not found");
+			}
+
+			static char usernameValue[256] = "";
+			SIZE_T bytesReadForUsername = 0;
+
+			bool foundUsername = ReadProcessMemory(hProcHandle, reinterpret_cast<LPCVOID>(usernamePointerAddress), usernameValue, sizeof(usernameValue), &bytesReadForUsername);
+
+			if (foundUsername) ImGui::Text("Username: %s", usernameValue);
+			else ImGui::Text("Username: Not found");
+
+			static char healthValue[256] = "";
+			SIZE_T bytesReadForHealth = 0;
+
+			bool foundHealth = ReadProcessMemory(hProcHandle, reinterpret_cast<LPCVOID>(healthPointerAddress), healthValue, sizeof(healthValue), &bytesReadForHealth);
+
+			if (foundHealth) {
+				ImGui::Text("Health: %s", healthValue);
+			}
+			else {
+				ImGui::Text("Health: Not found");
+			}
+
+			static char manaValue[256] = "";
+			SIZE_T bytesReadForMana = 0;
+
+			bool foundMana = ReadProcessMemory(hProcHandle, reinterpret_cast<LPCVOID>(manaPointerAddress), manaValue, sizeof(manaValue), &bytesReadForMana);
+
+			if (foundMana) {
+				ImGui::Text("Mana: %s", manaValue);
+			}
+			else {
+				ImGui::Text("Mana: Not found");
+			}
+
+			static char nonenemySelectionValue[256] = "";
+			SIZE_T bytesReadForNonenemySelection = 0;
+
+			bool foundNonenemy = ReadProcessMemory(hProcHandle, reinterpret_cast<LPCVOID>(nonenemySelectedPointerAddress), nonenemySelectionValue, sizeof(nonenemySelectionValue), &bytesReadForNonenemySelection);
+
+			if (foundNonenemy) {
+				if (!strstr(nonenemySelectionValue, "Locale"))
+					ImGui::Text("Last Selected Non-Enemy: %s", nonenemySelectionValue);
+				else
+					ImGui::Text("Last Selected Non-Enemy: None");
+			}
+			else {
+				ImGui::Text("Last Selected Non-Enemy: None");
+			}
+
+			static char enemySelectionValue[256] = "";
+			SIZE_T bytesReadForEnemySelection = 0;
+
+			bool foundEnemy = ReadProcessMemory(hProcHandle, reinterpret_cast<LPCVOID>(enemySelectedPointerAddress), enemySelectionValue, sizeof(enemySelectionValue), &bytesReadForEnemySelection);
+
+			if (foundEnemy) {
+				if (!strstr(enemySelectionValue, "Locale"))
+					ImGui::Text("Last Selected Enemy: %s", enemySelectionValue);
+				else
+					ImGui::Text("Last Selected Enemy: None");
+			}
+			else ImGui::Text("Last Selected Enemy: None");
+			ImGui::End();
+		}
+		catch (...) {
+			// Catch-all for unexpected errors - debugging
+		}
 	}
 }
 
