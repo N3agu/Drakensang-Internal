@@ -20,6 +20,11 @@ It's a simple internal menu built using ImGui. It provides functionalities like 
 **INS** - hide/show the features menu<br>
 **HOME** - hide/show the character menu<br>
 **END** - unhook dll
+<details open>
+<summary>Menu Preview</summary>
+<br>
+<img src="https://raw.githubusercontent.com/N3agu/Drakensang-Internal/main/images/menu.png">
+</details>
 
 - Camera<br>
 Address: **threadstack0 - 0x00000270**<br>
@@ -62,8 +67,12 @@ Address: **threadstack0 - 0x00000270**<br>
 Offsets: **0xD8, 0x120, 0x78, 0xD0, 0x60, 0x260, 0x2A0**
 
 - Health<br>
+Address: **threadstack0 - 0x00000278**<br>
+Offsets: **0x1C0, 0x78, 0xE8, 0x50, 0x58, 0x108, 0x198**
+
+- Mana<br>
 Address: **threadstack0 - 0x00000270**<br>
-Offsets: **0x194, 0x108, 0x58, 0x30, 0x200, 0x78**
+Offsets: **0x78, 0x200, 0x30, 0x58, 0x108, 0xA8**
 
 - Current Map<br>
 Address: **threadstack0 - 0x00000270**<br>
@@ -75,7 +84,7 @@ Offsets: **0x158, 0x58, 0x60, 0x0, 0x2A0**
 
 - Selected Non-Enemy (NPCs & Objects)<br>
 Address: **threadstack0 - 0x00000270**<br>
-Offsets: **0x150, 0x200, 0x10, 0x70, 0x60, 0x0, 0x2A0**
+Offsets: **0x158, 0x200, 0x10, 0x70, 0x60, 0x0, 0x2A0**
 
 ## Build
 Both the injector and the cheat were built with Visual Studio 2022.
@@ -96,7 +105,6 @@ The cheat can be found inside "*\Drakensang Internal\build*".
 
 ## Improvements
 - code refractoring
-- character testing (only Mage was tested)
 - character selector
 - finding entity list
 - other utilities in-game (fast mount, inventory seller, etc.)
