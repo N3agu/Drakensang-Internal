@@ -13,11 +13,12 @@ It is a simple injector which gets the handle of the game process, obtains the a
 - Exit correctly (kill pid)
 
 ## Internal Cheat
-Offsets were found with Cheat Engine.
+It's a simple internal menu built using ImGui. It provides functionalities like adjustable camera, smoke, angle view, visual attack speed, and displays player stats such as health, mana, and map information. Hooks and memory manipulation are implemented with MinHook for efficient interaction with game processes.
 
-### Features:
+### Features
 - Show/Hide & Unload<br>
-**INS** - hide/show the menu<br>
+**INS** - hide/show the features menu<br>
+**HOME** - hide/show the character menu<br>
 **END** - unhook dll
 
 - Camera<br>
@@ -95,6 +96,7 @@ The cheat can be found inside "*\Drakensang Internal\build*".
 
 ## Improvements
 - code refractoring
+- character testing (only Mage was tested)
 - character selector
 - finding entity list
 - other utilities in-game (fast mount, inventory seller, etc.)
