@@ -1,6 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "menu.h"
-#include "ntinfo.h"
+#include "utils.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_dx9.h"
 #include "imgui/imgui_impl_win32.h"
@@ -18,92 +18,46 @@ DWORD pid;
 
 uint64_t threadstack0 = NULL;
 
+// Features
 uint64_t cameraPointerAddress = NULL,
 	smokePointerAddress = NULL,
 	anglePointerAddress = NULL,
 	attackSpeedPointerAddress = NULL,
-	nonenemySelectedPointerAddress = NULL,
+	cameraAddress = -0x00000270,
+	smokeAddress = -0x00000270,
+	angleAddress = -0x00000270,
+	attackSpeedAddress = -0x00000270;
+
+std::vector<uint64_t> cameraOffsets = { 0x78, 0x218, 0x30, 0x50, 0x60, 0x60, 0x78 },
+	smokeOffsets = { 0x78, 0x218, 0x30, 0x50, 0x60, 0x60, 0x88 },
+	angleOffsets = { 0x78, 0x218, 0x30, 0x50, 0x60, 0x60, 0x94 },
+	attackSpeedOffsets = { 0x78, 0x110, 0x788, 0x30, 0x0, 0xD8 };
+
+// Character
+uint64_t nonenemySelectedPointerAddress = NULL,
 	enemySelectedPointerAddress = NULL,
 	currentMapPointerAddress = NULL,
 	usernamePointerAddress = NULL,
 	healthPointerAddress = NULL,
-	manaPointerAddress = NULL;
+	manaPointerAddress = NULL,
+	usernameAddress = -0x00000270,
+	currentMapAddress = -0x00000270,
+	enemySelectedAddress = -0x00000270,
+	nonenemySelectedAddress = -0x00000270,
+	healthAddress = -0x00000270,
+	manaAddress = -0x00000270;
 
-uint64_t cameraAddress = -0x00000270,
-smokeAddress = -0x00000270,
-angleAddress = -0x00000270,
-attackSpeedAddress = -0x00000270,
-usernameAddress = -0x00000270,
-currentMapAddress = -0x00000270,
-enemySelectedAddress = -0x00000270,
-nonenemySelectedAddress = -0x00000270,
-healthAddress = -0x00000278,
-manaAddress = -0x00000270;
-
-std::vector<uint64_t> cameraOffsets = { 0x78, 0x110, 0x738, 0x78, 0x60, 0x78 };
-std::vector<uint64_t> smokeOffsets = { 0x78, 0x110, 0x738, 0x78, 0x60, 0x88 };
-std::vector<uint64_t> angleOffsets = { 0x78, 0x110, 0x738, 0x78, 0x60, 0x94 };
-std::vector<uint64_t> attackSpeedOffsets = { 0x78, 0x110, 0x730, 0x30, 0x0, 0xC8 };
-
-// Unused offsets
-std::vector<uint64_t> usernameOffsets = { 0xD8, 0x120, 0x78, 0xD0, 0x60, 0x260, 0x2A0 };
-std::vector<uint64_t> healthOffsets = { 0x1C0, 0x78, 0xE8, 0x50, 0x58, 0x108, 0x198 };
-std::vector<uint64_t> manaOffsets = { 0x78, 0x200, 0x30, 0x58, 0x108, 0xA8 };
-std::vector<uint64_t> nonenemySelectedOffsets = { 0x158, 0x200, 0x10, 0x70, 0x60, 0x0, 0x2A0 };
-std::vector<uint64_t> enemySelectedOffsets = { 0x158, 0x58, 0x60, 0x0, 0x2A0 };
-std::vector<uint64_t> currentMapOffsets = { 0x1B8, 0x98, 0x40, 0x60, 0x0, 0x260, 0x260 };
+std::vector<uint64_t> usernameOffsets = { 0xD8, 0x120, 0x78, 0xD0, 0x60, 0x260, 0x2A0 },
+	healthOffsets = { 0x80, 0xB8, 0x20, 0x530, 0x48, 0x70, 0x40 },
+	manaOffsets = { 0x80, 0x80, 0x278, 0x40, 0x48, 0x70, 0x4C },
+	nonenemySelectedOffsets = { 0x158, 0x200, 0x10, 0x70, 0x60, 0x0, 0x2A0 },
+	enemySelectedOffsets = { 0x158, 0x58, 0x60, 0x0, 0x2A0 }, 
+	currentMapOffsets = { 0x1B8, 0x98, 0x40, 0x60, 0x0, 0x260, 0x260 };
 
 HANDLE hProcHandle = NULL,
 	threadHandle = NULL;
 
 void imgui_unhook();
-
-uint64_t GetThreadStartAddress(HANDLE processHandle, HANDLE hThread) {
-	/* rewritten from https://github.com/cheat-engine/cheat-engine/blob/master/Cheat%20Engine/CEFuncProc.pas#L3080 */
-	uint64_t used = 0, ret = 0, 
-		stacktop = 0, result = 0;
-
-	MODULEINFO mi;
-
-	GetModuleInformation(processHandle, GetModuleHandle("kernel32.dll"), &mi, sizeof(mi));
-	stacktop = (uint64_t)GetThreadstackTopAddress(processHandle, hThread);
-
-	CloseHandle(hThread);
-
-	if (stacktop) {
-		uint64_t* buf32 = new uint64_t[8192];
-
-		if (ReadProcessMemory(processHandle, (LPCVOID)(stacktop - 8192), buf32, 8192, NULL))
-			for (int i = 8192 / 8 - 1; i >= 0; --i)
-				if (buf32[i] >= (uint64_t)mi.lpBaseOfDll && buf32[i] <= (uint64_t)mi.lpBaseOfDll + mi.SizeOfImage) {
-					result = stacktop - 8192 + i * 8;
-					break;
-				}
-
-		delete buf32;
-	}
-
-	return result;
-}
-
-
-std::vector<uint64_t> threadList(uint64_t pid) {
-	std::vector<uint64_t> vect = std::vector<uint64_t>();
-	HANDLE h = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
-	if (h == INVALID_HANDLE_VALUE)
-		return vect;
-
-	THREADENTRY32 te;
-	te.dwSize = sizeof(te);
-	if (Thread32First(h, &te))
-		do {
-			if (te.dwSize >= FIELD_OFFSET(THREADENTRY32, th32OwnerProcessID) + sizeof(te.th32OwnerProcessID))
-				if (te.th32OwnerProcessID == pid) vect.push_back(te.th32ThreadID);
-			te.dwSize = sizeof(te);
-		} while (Thread32Next(h, &te));
-
-		return vect;
-}
 
 void calculatePointersForFeatures() {
 	try {
@@ -325,25 +279,25 @@ void showMenu() {
 			if (foundUsername) ImGui::Text("Username: %s", usernameValue);
 			else ImGui::Text("Username: Not found");
 
-			static char healthValue[256] = "";
+			int healthValue;
 			SIZE_T bytesReadForHealth = 0;
 
-			bool foundHealth = ReadProcessMemory(hProcHandle, reinterpret_cast<LPCVOID>(healthPointerAddress), healthValue, sizeof(healthValue), &bytesReadForHealth);
+			bool foundHealth = ReadProcessMemory(hProcHandle, reinterpret_cast<LPCVOID>(healthPointerAddress), &healthValue, sizeof(healthValue), &bytesReadForHealth);
 
 			if (foundHealth) {
-				ImGui::Text("Health: %s", healthValue);
+				ImGui::Text("Health: %i", healthValue);
 			}
 			else {
 				ImGui::Text("Health: Not found");
 			}
 
-			static char manaValue[256] = "";
+			int manaValue;
 			SIZE_T bytesReadForMana = 0;
 
-			bool foundMana = ReadProcessMemory(hProcHandle, reinterpret_cast<LPCVOID>(manaPointerAddress), manaValue, sizeof(manaValue), &bytesReadForMana);
+			bool foundMana = ReadProcessMemory(hProcHandle, reinterpret_cast<LPCVOID>(manaPointerAddress), &manaValue, sizeof(manaValue), &bytesReadForMana);
 
 			if (foundMana) {
-				ImGui::Text("Mana: %s", manaValue);
+				ImGui::Text("Mana: %i", manaValue);
 			}
 			else {
 				ImGui::Text("Mana: Not found");

@@ -161,7 +161,7 @@
     <ClCompile Include="min_hook\src\hde\hde64.c" />
     <ClCompile Include="min_hook\src\hook.c" />
     <ClCompile Include="min_hook\src\trampoline.c" />
-    <ClCompile Include="ntinfo.cpp" />
+    <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h" />
@@ -181,7 +181,7 @@
     <ClInclude Include="min_hook\src\hde\table32.h" />
     <ClInclude Include="min_hook\src\hde\table64.h" />
     <ClInclude Include="min_hook\src\trampoline.h" />
-    <ClInclude Include="ntinfo.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

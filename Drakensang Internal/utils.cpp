@@ -1,4 +1,4 @@
-#include "ntinfo.h"
+#include "utils.h"
 
 typedef struct _CLIENT_ID {
 	PVOID UniqueProcess;
@@ -50,4 +50,51 @@ void* GetThreadstackTopAddress(HANDLE hProcess, HANDLE hThread) {
 	if (loadedManually) FreeLibrary(module);
 
 	return nullptr;
+}
+
+uint64_t GetThreadStartAddress(HANDLE processHandle, HANDLE hThread) {
+	/* rewritten from https://github.com/cheat-engine/cheat-engine/blob/master/Cheat%20Engine/CEFuncProc.pas#L3080 */
+	uint64_t used = 0, ret = 0,
+		stacktop = 0, result = 0;
+
+	MODULEINFO mi;
+
+	GetModuleInformation(processHandle, GetModuleHandle("kernel32.dll"), &mi, sizeof(mi));
+	stacktop = (uint64_t)GetThreadstackTopAddress(processHandle, hThread);
+
+	CloseHandle(hThread);
+
+	if (stacktop) {
+		uint64_t* buf32 = new uint64_t[8192];
+
+		if (ReadProcessMemory(processHandle, (LPCVOID)(stacktop - 8192), buf32, 8192, NULL))
+			for (int i = 8192 / 8 - 1; i >= 0; --i)
+				if (buf32[i] >= (uint64_t)mi.lpBaseOfDll && buf32[i] <= (uint64_t)mi.lpBaseOfDll + mi.SizeOfImage) {
+					result = stacktop - 8192 + i * 8;
+					break;
+				}
+
+		delete buf32;
+	}
+
+	return result;
+}
+
+
+std::vector<uint64_t> threadList(uint64_t pid) {
+	std::vector<uint64_t> vect = std::vector<uint64_t>();
+	HANDLE h = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
+	if (h == INVALID_HANDLE_VALUE)
+		return vect;
+
+	THREADENTRY32 te;
+	te.dwSize = sizeof(te);
+	if (Thread32First(h, &te))
+		do {
+			if (te.dwSize >= FIELD_OFFSET(THREADENTRY32, th32OwnerProcessID) + sizeof(te.th32OwnerProcessID))
+				if (te.th32OwnerProcessID == pid) vect.push_back(te.th32ThreadID);
+			te.dwSize = sizeof(te);
+		} while (Thread32Next(h, &te));
+
+	return vect;
 }
