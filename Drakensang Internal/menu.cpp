@@ -57,7 +57,33 @@ std::vector<uint64_t> usernameOffsets = { 0xD8, 0x120, 0x78, 0xD0, 0x60, 0x260, 
 HANDLE hProcHandle = NULL,
 	threadHandle = NULL;
 
-void imgui_unhook();
+void imgui_unhook() {
+	try {
+		// Restore WndProc
+		if (oWndProc && FindWindowA(NULL, "Drakensang Online")) {
+			SetWindowLongPtr(FindWindowA(NULL, "Drakensang Online"), GWLP_WNDPROC, (LONG_PTR)oWndProc);
+		}
+
+		// Disable hooks
+		MH_DisableHook(MH_ALL_HOOKS);
+		MH_RemoveHook(reinterpret_cast<void*>(EndScene_orig));
+		MH_RemoveHook(reinterpret_cast<void*>(DrawIndexedPrimitive_orig));
+		MH_RemoveHook(reinterpret_cast<void*>(Reset_orig));
+		MH_Uninitialize();
+
+		// ImGui shutdown
+		ImGui_ImplDX9_Shutdown();
+		ImGui_ImplWin32_Shutdown();
+		ImGui::DestroyContext();
+
+		// Close process handle
+		if (hProcHandle) {
+			CloseHandle(hProcHandle);
+			hProcHandle = NULL;
+		}
+	}
+	catch (...) {}
+}
 
 void calculatePointersForFeatures() {
 	try {
@@ -152,7 +178,7 @@ DWORD WINAPI menuSetup(LPVOID lpParameter) {
 		return 0;
 	}
 
-	HWND hwndProc = GetForegroundWindow();
+	HWND hwndProc = FindWindowA(NULL, "Drakensang Online");
 	if (!hwndProc) {
 		MessageBoxA(NULL, "Invalid HWND", "Failed to find window", 0);
 		return 0;
@@ -367,10 +393,4 @@ HRESULT APIENTRY EndScene_hook(LPDIRECT3DDEVICE9 pD3D9) {
 HRESULT APIENTRY Reset_hook(LPDIRECT3DDEVICE9 pD3D9, D3DPRESENT_PARAMETERS* pPresentationParameters) {
 	HRESULT ResetReturn = Reset_orig(pD3D9, pPresentationParameters);
 	return ResetReturn;
-}
-
-void imgui_unhook() {
-	ImGui_ImplDX9_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
 }
