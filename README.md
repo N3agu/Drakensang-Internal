@@ -86,6 +86,46 @@ Offsets: **0x158, 0x58, 0x60, 0x0, 0x2A0**
 Address: **threadstack0 - 0x00000270**<br>
 Offsets: **0x158, 0x200, 0x10, 0x70, 0x60, 0x0, 0x2A0**
 
+## How to find pointers
+I recommend this video for pointer scanning: [Cheat Engine Pointer Scanning Tutorial](https://www.youtube.com/watch?v=rBe8Atevd-4) (by [GuidedHacking](https://www.youtube.com/@GuidedHacking)) and [How to find entity list using luck](https://www.youtube.com/watch?v=xefIcQXmw8g) by ([Swedz](https://www.youtube.com/@SwedishTwat))<br/>
+
+<details>
+<summary>Tips for finding Health & Mana (or any characteristic that can be modified by items)</summary>
+1.  In the game, hover your mouse over the mana or health bar (or open the character statistics). Search for the displayed value in CE as a 4-byte integer.<br/>
+2.  Unequip an item that affects your mana or health. Search for the new, reduced value in CE.<br/>
+3.  Re-equip the item. Search for the new, increased value.<br/>
+4.  Repeat steps 3 and 4 until you have a small number of potential addresses remaining.<br/>
+5.  Add all remaining addresses to the address list in CE.<br/>
+6.  Try editing the values in the list. One or two of these addresses will likely be related to the UI display and should be ignored. Do not perform pointer scans on these UI-related addresses.<br/>
+</details>
+<details>
+<summary>Tips for finding Camera / Smoke / Angle View</summary>
+1.  In the game, set the camera to its maximum zoomed-out position. Search for the value 25 in Cheat Engine (CE) as a float.<br/>
+2.  Zoom in and search for a "Decreased value." Zoom in further and search for "Decreased value" again. Then, zoom out and use "Increased value." Repeat this process a few times.<br/>
+3.  After narrowing down to a few addresses, edit each one separately (try with 50). If editing a value causes the camera to zoom significantly out, that's likely your camera address. Pointer scan for this address. Once you've found the final camera pointer (the address holding the camera's float value), you can often locate the other two features relative to it:<br/>
+    - Smoke: Usually found at an offset of `+0x10` from the camera's final address.<br/>
+    - Angle View: Usually found at an offset of `+0xC` from the smoke's final address (or `+0x1C` from the camera's final address).<br/>
+</details>
+<details>
+<summary>Tips for finding Name / Current Map / Selected Enemy / Selected Non-Enemy</summary>
+1.  In the game, search for the target name (for selected entities, you need to hover over the enemy or non-enemy). Search for the displayed value in Cheat Engine as a string.<br/>
+2.  Change the selected entities a few times.<br/>
+</details>
+<details>
+<summary>Tips for finding Entity</summary>
+1.  In the game, unequip everything that has damage, equip a spell that doesn't deal too much damage, and enter a map where you won't kill enemies in one hit.<br/>
+2.  Attack one enemy multiple times (you should need to hit the enemy at least 4-5 times; you can try with a boss, but I haven't). Add up all the damage you dealt to get a rough estimate of the enemy's health.<br/>
+3.  In Cheat Engine, set the scan type to "Value between..." and search for a 4-byte value. Set the minimum to your calculated estimate minus 2000, and the maximum to your calculated estimate plus 2000.<br/>
+4.  From there follow the video suggested (you can also use ReClass.NET or completely reverse the game with IDA/Ghidra), keep in mind DSO is built on Nebula Engine.
+</details>
+<details>
+<summary>General tips after finding some pointers</summary>
+1. Enter a new map: After finding some pointers, move to a different in-game map and check if the values remain consistent.<br/>
+2. Restart the game: If the pointers hold up across several maps, close and reopen the game. Then, verify if the saved pointers still point to the correct values.<br/>
+3. Change characters: After reopening the game, try switching to a different character type. Confirm that the pointers continue to be valid for this new character.<br/>
+After this checks, your pointers should hold up at least until the next DSO update.<br/>
+</details>
+
 ## Build
 Both the injector and the cheat were built with Visual Studio 2022.
 
